@@ -1,3 +1,8 @@
 .DS_Store
+
 /result
 .direnv/
+
+.terraform/
+*.tfstate*
+*.auto.tfvars.json
