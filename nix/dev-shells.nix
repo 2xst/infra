@@ -9,7 +9,12 @@
     {
       devShells = {
         default = pkgs.mkShellNoCC {
-          packages = lib.attrValues self'.packages;
+          packages =
+            with pkgs;
+            [
+              github-cli
+            ]
+            ++ lib.attrValues self'.packages;
         };
       };
     };

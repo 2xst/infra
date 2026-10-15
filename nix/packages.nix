@@ -1,6 +1,6 @@
 {
   perSystem = { pkgs, ... }: {
-    packages.default = pkgs.opentofu.withPlugins (
+    packages.terraform = pkgs.opentofu.withPlugins (
       plugins: with plugins; [
         integrations_github
       ]
