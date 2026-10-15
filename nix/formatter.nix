@@ -8,6 +8,7 @@
     programs.nixfmt.enable = true;
     programs.stylua.enable = true;
     programs.keep-sorted.enable = true;
+    programs.terraform.enable = true;
     programs.deno = {
       enable = true;
       includes = [ "*.md" ];
