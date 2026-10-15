@@ -16,9 +16,9 @@ resource "github_repository" "this" {
   has_projects                = true
   has_wiki                    = false
   homepage_url                = ""
-  name                        = "toffifee"
+  name                        = "infra"
   topics                      = ["testtopic"]
-  visibility                  = "private"
+  visibility                  = "public"
   web_commit_signoff_required = false
 
   lifecycle {
