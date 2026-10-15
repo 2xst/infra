@@ -15,15 +15,20 @@ permissions:
   contents: read
 
 jobs:
-  tofu:
+  ci:
+    uses: ./.github/workflows/ci.yaml
+  plan:
     runs-on: ubuntu-latest
     environment: infra-plan
+    needs: ci
+
     defaults:
       run:
         working-directory: infra
     env:
       TF_VAR_owner: ${{ github.repository_owner }}
       TF_VAR_repo_name: ${{ github.event.repository.name }}
+
     steps:
       - uses: actions/checkout@v4
       - id: app-token
@@ -34,12 +39,7 @@ jobs:
 
       - uses: cachix/install-nix-action@v31
 
-      # - uses: opentofu/setup-opentofu@v1
-      #   with:
-      #     tofu_version: 1.8.x
-
       - run: nix run ..#discover-rulesets > existing.auto.tfvars.json
-        # run: ./scripts/discover.sh
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
@@ -47,9 +47,3 @@ jobs:
       - run: nix run ..#tofu -- plan -out=tfplan -input=false
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-
-      # - name: Apply (main only)
-      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      #   run: tofu apply -input=false tfplan
-      #   env:
-      #     GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
