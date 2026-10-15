@@ -36,8 +36,8 @@ jobs:
               - 'flake.nix'
               - 'flake.lock'
 
-  plan:
-    needs: [changes]
+  infra-plan:
+    needs: [infra-changes]
     if: needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
 
