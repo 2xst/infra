@@ -38,13 +38,13 @@ jobs:
       #   with:
       #     tofu_version: 1.8.x
 
-      - run: nix run .#discover-rulesets > existing.auto.tfvars.json
+      - run: nix run ..#discover-rulesets > existing.auto.tfvars.json
         # run: ./scripts/discover.sh
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
-      - run: nix run .#tofu -- init -lockfile=readonly
-      - run: nix run .#tofu -- plan -out=tfplan -input=false
+      - run: nix run ..#tofu -- init -lockfile=readonly
+      - run: nix run ..#tofu -- plan -out=tfplan -input=false
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
