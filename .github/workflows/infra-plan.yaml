@@ -1,0 +1,54 @@
+name: Infra plan
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+
+concurrency:
+  group: tofu-${{ github.repository }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tofu:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    env:
+      TF_VAR_owner: ${{ github.repository_owner }}
+      TF_VAR_repo_name: ${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TOFU_APP_ID }}
+          private-key: ${{ secrets.TOFU_APP_PRIVATE_KEY }}
+
+      - uses: cachix/install-nix-action@v31
+
+      # - uses: opentofu/setup-opentofu@v1
+      #   with:
+      #     tofu_version: 1.8.x
+
+      - run: nix run .#discover-rulesets > existing.auto.tfvars.json
+        # run: ./scripts/discover.sh
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - run: nix run .#tofu init -- -lockfile=readonly
+      - run: nix run .#tofu tofu plan -- -out=tfplan -input=false
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      # - name: Apply (main only)
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: tofu apply -input=false tfplan
+      #   env:
+      #     GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
