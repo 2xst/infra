@@ -26,7 +26,7 @@ resource "github_repository_ruleset" "this" {
     required_linear_history = true
 
     pull_request {
-      dismiss_stale_reviews_on_push   = true
+      dismiss_stale_reviews_on_push = true
     }
   }
 }
