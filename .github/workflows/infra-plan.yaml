@@ -17,6 +17,7 @@ permissions:
 jobs:
   tofu:
     runs-on: ubuntu-latest
+    environment: infra-plan
     defaults:
       run:
         working-directory: infra
