@@ -1,8 +1,11 @@
 .DS_Store
 
-/result
+result
 .direnv/
 
 .terraform/
 *.tfstate*
 *.auto.tfvars.json
+
+# managed with nix
+.terraform.lock.hcl
