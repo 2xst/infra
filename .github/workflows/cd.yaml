@@ -1,0 +1,57 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: ${{ github.repository }}-settings
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: Settings
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+
+    defaults:
+      run:
+        working-directory: infra
+    env:
+      TF_VAR_owner: ${{ github.repository_owner }}
+      TF_VAR_repo_name: ${{ github.event.repository.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: infra
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/install-nix-action@v31
+
+      - run: nix run ..#tofu -- init
+
+      - id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TOFU_WRITER_ID }}
+          private-key: ${{ secrets.TOFU_WRITER_KEY }}
+
+      - run: nix run ..#tofu -- apply -input=false tfplan
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
