@@ -43,8 +43,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
-      - run: nix run .#tofu init -- -lockfile=readonly
-      - run: nix run .#tofu tofu plan -- -out=tfplan -input=false
+      - run: nix run .#tofu -- init -lockfile=readonly
+      - run: nix run .#tofu -- plan -out=tfplan -input=false
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
