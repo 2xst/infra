@@ -10,5 +10,4 @@ terraform {
 
 provider "github" {
   owner = var.owner
-  # Auth comes from the GITHUB_TOKEN env var
 }
