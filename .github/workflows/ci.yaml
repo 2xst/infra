@@ -14,3 +14,65 @@ jobs:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v31
       - run: nix flake check
+
+  infra-changes:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      infra: ${{ steps.filter.outputs.infra }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            infra:
+              - 'infra/**'
+              - '.github/workflows/**'
+              - 'flake.nix'
+              - 'flake.lock'
+
+  plan:
+    needs: [changes]
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra
+    env:
+      TF_VAR_owner: ${{ github.repository_owner }}
+      TF_VAR_repo_name: ${{ github.event.repository.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+
+      - id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TOFU_READER_ID }}
+          private-key: ${{ secrets.TOFU_READER_KEY }}
+
+      - run: nix run ..#discover-rulesets > existing.auto.tfvars.json
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - run: nix run ..#tofu -- init -input=false
+
+      - run: nix run ..#tofu -- plan -input=false -out=tfplan
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'push'
+        with:
+          name: tfplan
+          path: infra/tfplan
+          retention-days: 1
+          if-no-files-found: error

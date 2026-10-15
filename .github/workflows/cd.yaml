@@ -1,13 +1,13 @@
-name: Infra apply
+name: CD
 
 on:
   workflow_run:
-    workflows: ["Infra plan"]
+    workflows: [CI]
     types: [completed]
     branches: [main]
 
 concurrency:
-  group: deploy
+  group: ${{ github.repository }}-settings
   cancel-in-progress: false
 
 permissions:
@@ -17,7 +17,7 @@ permissions:
 jobs:
   apply:
     runs-on: ubuntu-latest
-    environment: infra-apply
+    environment: Settings
     if: >
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
@@ -49,8 +49,8 @@ jobs:
       - id: app-token
         uses: actions/create-github-app-token@v1
         with:
-          app-id: ${{ secrets.TOFU_APP_ID }}
-          private-key: ${{ secrets.TOFU_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.TOFU_WRITER_ID }}
+          private-key: ${{ secrets.TOFU_WRITER_KEY }}
 
       - run: nix run ..#tofu -- apply -input=false tfplan
         env:
