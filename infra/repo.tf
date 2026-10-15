@@ -17,7 +17,7 @@ resource "github_repository" "this" {
   has_wiki                    = false
   homepage_url                = ""
   name                        = "infra"
-  topics                      = ["Terraform", "OpenTofu", "Nix", "GitHub"]
+  topics                      = ["terraform", "opentofu", "nix", "github"]
   visibility                  = "public"
   web_commit_signoff_required = false
 
