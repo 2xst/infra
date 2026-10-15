@@ -1,7 +1,7 @@
 {
   writeShellApplication,
   github-cli,
-  jq
+  jq,
 }:
 
 writeShellApplication {
