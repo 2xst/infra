@@ -8,7 +8,7 @@ resource "github_repository" "this" {
   archive_on_destroy          = true
   auto_init                   = false
   delete_branch_on_merge      = false
-  description                 = "test description"
+  description                 = "Showcase of stateless IaC configuration of a GitHub repository settings"
   fork                        = "false"
   gitignore_template          = null
   has_discussions             = false
@@ -17,7 +17,7 @@ resource "github_repository" "this" {
   has_wiki                    = false
   homepage_url                = ""
   name                        = "infra"
-  topics                      = ["testtopic"]
+  topics                      = ["terraform", "opentofu", "nix", "github"]
   visibility                  = "public"
   web_commit_signoff_required = false
 
