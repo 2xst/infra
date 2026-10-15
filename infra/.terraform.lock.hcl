@@ -7,6 +7,7 @@ provider "registry.opentofu.org/integrations/github" {
   hashes = [
     "h1:2kD+4leuV8tBBXv+EPeehmfW6cDhIzVki61OXsGCtRI=",
     "h1:5il8c3drQyyOVsPJLGyBU1W/4lhnoJ9s9zqNiVwPtnw=",
+    "h1:dagcFGf62sax3wUP/g087VTccr8Et53qgQb4bVCzKKU=",
     "h1:99s0C+KmzXIsUJY0tKlgfcFUIuuXjCK0TAeeZ8HaOZQ=",
     "h1:Mug81HyUTKKMngXMOtBxuQ8ge3dVnzt9tGcF9SxLcVE=",
     "h1:RhCWa2aaFVKF/HzeR0fkIxZmoJvkGrv07hE0z09aPQs=",
